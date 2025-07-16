@@ -28,7 +28,7 @@ public class JwtUtil {
     }
 
     // JWT 토큰 안에서 사용자 식별을 위한
-    public String getUsername(String token) {
+    public String getUserId(String token) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)

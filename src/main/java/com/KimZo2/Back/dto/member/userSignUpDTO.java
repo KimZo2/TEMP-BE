@@ -8,5 +8,4 @@ public class userSignUpDTO {
     private String userId;
     private String userPw;
     private String nickname;
-
 }

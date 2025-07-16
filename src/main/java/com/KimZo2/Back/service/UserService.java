@@ -1,5 +1,6 @@
 package com.KimZo2.Back.service;
 
+import com.KimZo2.Back.dto.member.LoginResponseDTO;
 import com.KimZo2.Back.dto.member.userLoginDTO;
 import com.KimZo2.Back.dto.member.userSignUpDTO;
 import com.KimZo2.Back.exception.DuplicateUserIdException;
@@ -27,7 +28,7 @@ public class UserService {
         String nickName = dto.getNickname();
 
         // 중복 검사
-        validateDuplicateUser(userId);
+        //validateDuplicateUser(userId);
 
         // User 엔티티 설정
         User user = new User();
@@ -47,7 +48,7 @@ public class UserService {
     }
 
     // 유저 로그인
-    public String logIn(userLoginDTO dto) {
+    public LoginResponseDTO logIn(userLoginDTO dto) {
         String userId = dto.getUserId();
         String rawPw = dto.getUserPw();
 
@@ -63,6 +64,8 @@ public class UserService {
         // JWT 토큰 생성
         String token = jwtUtil.generateToken(userId);
 
-        return token;
+        // User nickname이랑 해서 DTO 형태로 묶어서 보내기?
+
+        return new LoginResponseDTO(token, user.getNickName());
     }
 }

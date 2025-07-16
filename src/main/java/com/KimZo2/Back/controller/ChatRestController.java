@@ -17,7 +17,6 @@ public class ChatRestController {
 
     private final ChatService chatService;
 
-
     // 나중에 이거 roomID 해쉬 되도록 변경 해야함
     @GetMapping("/{roomId}")
     public List<ChatMessageDTO> getChatHistory(@PathVariable String roomId) {

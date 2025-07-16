@@ -5,10 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
+import java.util.List;
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EnterRoomMessage {
+public class RoomInfoDto {
     private String roomId;
-    private String nickname;
+    private List<Character> characterList;
 }

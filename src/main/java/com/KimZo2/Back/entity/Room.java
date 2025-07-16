@@ -7,11 +7,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Setter
 public class Room {
-
     @Id
     @GeneratedValue
     private String id;
@@ -21,5 +22,4 @@ public class Room {
     private String creator;
 
     private LocalDateTime createAt;
-
 }
