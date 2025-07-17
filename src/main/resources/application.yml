@@ -1,6 +1,22 @@
 spring:
-  profiles:
-    active: local
+  datasource:
+    hikari:
+      jdbc-url:  jdbc:mariadb://localhost:3307/kimzo2
+      username:  root
+      password:  1234
+      driver-class-name:  org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update # Entitiy 기준 테이블 자동 생성
+    show-sql: true # 쿼리 컨솔 출력
+    properties:
+      hibernate:
+        format_sql: true # 쿼리 예쁘게 출력
+
+kakao:
+  auth:
+    client: cea56f08e7eabd30382d6e94a464980b
+    redirect: http://localhost:8080/auth/login/kakao
 
 server:
   port: 8080
@@ -11,3 +27,5 @@ server:
       enabled: true
       force: true
       force-response: true
+
+

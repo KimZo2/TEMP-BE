@@ -9,6 +9,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+    public static final String [] allowUrls = {
+            "/",
+            "/user/**",
+            "/auth/login/kakao/**",
+            "/ws/**"
+    };
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -20,7 +26,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/user/signup", "/user/login", "/ws/**").permitAll()
+                        .requestMatchers(allowUrls).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())
@@ -28,4 +34,5 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }
