@@ -20,9 +20,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
 
-    @Override
     public User oAuthLogin(String accessCode, HttpServletResponse httpServletResponse) {
-        KakaoDTO oAuthToken = kakaoUtil.requestToken(accessCode);
+        KakaoDTO.OAuthToken oAuthToken = kakaoUtil.requestToken(accessCode);
+        KakaoDTO.KakaoProfile kakaoProfile = kakaoUtil.requestProfile(oAuthToken);
 
     }
 }
