@@ -1,22 +1,30 @@
-spring:
-  datasource:
-    hikari:
-      jdbc-url:  jdbc:mariadb://localhost:3307/kimzo2
-      username:  root
-      password:  1234
-      driver-class-name:  org.mariadb.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update # Entitiy 기준 테이블 자동 생성
-    show-sql: true # 쿼리 컨솔 출력
-    properties:
-      hibernate:
-        format_sql: true # 쿼리 예쁘게 출력
+#spring:
+#  datasource:
+#    hikari:
+#      jdbc-url:  jdbc:mariadb://localhost:3307/kimzo2
+#      username:  root
+#      password:  1234
+#      driver-class-name:  org.mariadb.jdbc.Driver
+#  jpa:
+#    hibernate:
+#      ddl-auto: update # Entitiy 기준 테이블 자동 생성
+#    show-sql: true # 쿼리 컨솔 출력
+#    properties:
+#      hibernate:
+#        format_sql: true # 쿼리 예쁘게 출력
 
 kakao:
   auth:
-    client: cea56f08e7eabd30382d6e94a464980b
+    client: 7283856de85a45eb1e84fa3d407c585d
     redirect: http://localhost:8080/auth/login/kakao
+
+naver:
+  auth:
+    client-id: gt_Tdkt0o36KobLBGafL
+    client-secret: PY2aBgN_Di
+    redirect-uri: http://localhost:8080/auth/login/naver
+    token-uri: https://nid.naver.com/oauth2.0/token
+    profile-uri: https://openapi.naver.com/v1/nid/me
 
 server:
   port: 8080

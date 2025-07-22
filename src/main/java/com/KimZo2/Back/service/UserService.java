@@ -34,7 +34,7 @@ public class UserService {
         User user = new User();
         user.setUserId(userId);
         user.setUserPw(userPw);
-        user.setNickName(nickName);
+        user.setNickname(nickName);
 
         userRepository.save(user);
     }
@@ -66,6 +66,6 @@ public class UserService {
 
         // User nickname이랑 해서 DTO 형태로 묶어서 보내기?
 
-        return new LoginResponseDTO(token, user.getNickName());
+        return new LoginResponseDTO(token, user.getNickname());
     }
 }

@@ -4,10 +4,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter @Setter
 public class User {
 
@@ -20,5 +22,13 @@ public class User {
 
     private String userPw;
 
-    private String nickName;
+    private String provider; // kakao or naver or null
+
+    private String providerId; // Oauth toekn
+
+    private String name;
+
+    private String nickname; // 필수 항목 이걸로 사용자 구분
+
+    private String birthday;
 }

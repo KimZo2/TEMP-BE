@@ -12,7 +12,7 @@ public class SecurityConfig {
     public static final String [] allowUrls = {
             "/",
             "/user/**",
-            "/auth/login/kakao/**",
+            "/auth/**",
             "/ws/**"
     };
 
@@ -27,7 +27,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(allowUrls).permitAll()
+//                        .requestMatchers("/auth/login/kakao/**").permitAll()
                         .anyRequest().authenticated()
+
                 )
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());

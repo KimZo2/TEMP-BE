@@ -19,9 +19,9 @@ public class JwtUtil {
     private final long expirationMs = 60 * 60 * 1000;
 
     // 토근 생성
-    public String generateToken(String username) {
+    public String generateToken(String userNickName) {
         return Jwts.builder()
-                .setSubject(username) // 토큰 주제(유저명)
+                .setSubject(userNickName) // 토큰 주제(유저명)
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(key)  // 서명 (변조 방지)
                 .compact();
