@@ -52,10 +52,10 @@ public class KakaoUtil {
     }
 
 
-    public KakaoDTO.KakaoProfile requestProfile(KakaoDTO.OAuthToken oAuthToken) {
+    public KakaoDTO.KakaoProfile requestProfile(String oAuthToken) {
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://kapi.kakao.com")
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + oAuthToken.getAccess_token())
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + oAuthToken)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .build();
 
@@ -65,7 +65,6 @@ public class KakaoUtil {
                 .bodyToMono(KakaoDTO.KakaoProfile.class)
                 .block(); // 동기 방식으로 바로 받음
 
-        log.info("kakaoNickname: {}", kakaoProfile.getKakao_account().getProfile().getNickname());
 
         return kakaoProfile;
     }

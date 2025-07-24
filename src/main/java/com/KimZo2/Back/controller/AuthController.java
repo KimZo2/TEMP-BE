@@ -2,6 +2,7 @@ package com.KimZo2.Back.controller;
 
 import com.KimZo2.Back.dto.auth.AdditionalSignupRequest;
 import com.KimZo2.Back.dto.auth.AuthResponse;
+import com.KimZo2.Back.dto.auth.OAuthLoginRequest;
 import com.KimZo2.Back.dto.member.LoginResponseDTO;
 import com.KimZo2.Back.entity.User;
 import com.KimZo2.Back.service.AuthService;
@@ -103,6 +104,16 @@ public class AuthController {
 
         LoginResponseDTO user = authService.oAuthLoginWithGoogle(accessCode, state, response);
         return ResponseEntity.ok(user);
+    }
+
+
+
+    public ResponseEntity<LoginResponseDTO> OAuthLogin(
+            @RequestBody OAuthLoginRequest dto,
+            HttpServletResponse response
+            )
+    {
+
     }
 
 

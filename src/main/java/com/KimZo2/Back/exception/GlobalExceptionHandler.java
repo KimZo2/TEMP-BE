@@ -47,13 +47,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AdditionalSignupRequiredException.class)
     public ResponseEntity<?> handleAdditionalSignupRequired(AdditionalSignupRequiredException e) {
-        log.warn("🚨 추가 회원가입 예외 발생: provider={}, id={}, name={}", e.getProvider(), e.getProviderId(), e.getName());
+        log.warn("🚨 추가 회원가입 예외 발생: provider={}, id={}", e.getProvider(), e.getProviderId());
 
         return ResponseEntity.status(HttpStatus.PRECONDITION_REQUIRED) // ResponseCode 428
                 .body(Map.of(
                         "provider", e.getProvider(),
-                        "providerId", e.getProviderId(),
-                        "name", e.getName()
+                        "providerId", e.getProviderId()
                 ));
     }
 

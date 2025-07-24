@@ -32,17 +32,13 @@ public class AuthService {
     public LoginResponseDTO oAuthLoginWithKakao(String accessCode, HttpServletResponse response) {
         log.info("AuthService - 카카오 인증 실행");
 
-        // access_token 요청
-        KakaoDTO.OAuthToken oAuthToken = kakaoUtil.requestToken(accessCode);
-
         // 사용자 정보 요청
-        KakaoDTO.KakaoProfile kakaoProfile = kakaoUtil.requestProfile(oAuthToken);
+        KakaoDTO.KakaoProfile kakaoProfile = kakaoUtil.requestProfile(accessCode);
 
         String provider = "kakao";
         String providerId = String.valueOf(kakaoProfile.getId());
-        String name = kakaoProfile.getKakao_account().getProfile().getNickname();
 
-        return handleSocialLogin(provider, providerId, name, response);
+        return handleSocialLogin(provider, providerId, response);
     }
 
     public LoginResponseDTO oAuthLoginWithNaver(String code, String state, HttpServletResponse response) {
@@ -58,7 +54,7 @@ public class AuthService {
         String providerId = String.valueOf(naverUser.getId());
         String name = naverUser.getName();
 
-        return handleSocialLogin(provider, providerId, name, response);
+        return handleSocialLogin(provider, providerId, response);
     }
 
     public LoginResponseDTO oAuthLoginWithGithub(String code, String state, HttpServletResponse response) {
@@ -77,8 +73,9 @@ public class AuthService {
             name = githubUser.getLogin();
         }
 
-        return handleSocialLogin(provider, providerId, name, response);
+        return handleSocialLogin(provider, providerId, response);
     }
+
 
     public LoginResponseDTO oAuthLoginWithGoogle(String code, String state, HttpServletResponse response) {
         log.info("AuthService - 구글 인증 실행");
@@ -91,12 +88,25 @@ public class AuthService {
 
         String provider = "google";
         String providerId = String.valueOf(googleUser.getId());
-        String name = googleUser.getName();
 
-        return handleSocialLogin(provider, providerId, name, response);
+        return handleSocialLogin(provider, providerId, response);
     }
 
-    public LoginResponseDTO handleSocialLogin(String provider, String providerId, String name, HttpServletResponse response) {
+    public LoginResponseDTO oAuthLogin(OAuthLoginRequest dto, HttpServletResponse response) {
+        log.info("AuthService - 로그인 인증 실행");
+
+        String accessToken;
+        String provider = dto.getProvider();
+
+        if(provider.equals("kakao")) {
+
+        }
+
+
+
+    }
+
+    public LoginResponseDTO handleSocialLogin(String provider, String providerId, HttpServletResponse response) {
         Optional<User> optionalUser = userRepository.findByProviderAndProviderId(provider, providerId);
 
         if (optionalUser.isPresent()) {
@@ -105,7 +115,7 @@ public class AuthService {
             response.setHeader("Authorization", token);
             return new LoginResponseDTO(token, user.getNickname());
         } else {
-            throw new AdditionalSignupRequiredException(provider, providerId, name);
+            throw new AdditionalSignupRequiredException(provider, providerId);
         }
     }
 
