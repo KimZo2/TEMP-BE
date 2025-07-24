@@ -14,40 +14,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 public class GoogleUtil {
 
-    @Value("${google.auth.client-id}")
-    private String clientId;
-
-    @Value("${google.auth.client-secret}")
-    private String clientSecret;
-
-    @Value("${google.auth.redirect-uri}")
-    private String redirectUri;
-
-    @Value("${google.auth.token-uri}")
-    private String tokenUri;
-
     @Value("${google.auth.profile-uri}")
     private String profileUri;
 
     private final WebClient.Builder webClientBuilder;
-
-    //  Access Token 요청
-    public String requestToken(String code) {
-        WebClient webClient = webClientBuilder.build();
-
-        return webClient.post()
-                .uri(tokenUri)
-                .header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded")
-                .bodyValue("code=" + code
-                        + "&client_id=" + clientId
-                        + "&client_secret=" + clientSecret
-                        + "&redirect_uri=" + redirectUri
-                        + "&grant_type=authorization_code")
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .map(tokenResponse -> tokenResponse.get("access_token").asText())
-                .block();
-    }
 
     // 사용자 정보 요청
     public GoogleDTO.GoogleUser requestProfile(String accessToken) {

@@ -4,8 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class NaverDTO {
-    private String resultcode;
-    private String message;
     private NaverUser response;
 
     @Getter

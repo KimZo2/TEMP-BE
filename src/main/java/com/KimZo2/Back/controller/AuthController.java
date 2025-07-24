@@ -1,17 +1,14 @@
 package com.KimZo2.Back.controller;
 
 import com.KimZo2.Back.dto.auth.AdditionalSignupRequest;
-import com.KimZo2.Back.dto.auth.AuthResponse;
-import com.KimZo2.Back.dto.auth.OAuthLoginRequest;
+import com.KimZo2.Back.dto.auth.OAuthAccessTokenRequest;
 import com.KimZo2.Back.dto.member.LoginResponseDTO;
-import com.KimZo2.Back.entity.User;
 import com.KimZo2.Back.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +36,12 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "인증 실패")
     })
     @GetMapping("/login/kakao")
-    public ResponseEntity<LoginResponseDTO> kakaoLogin(@RequestParam("code") String accessCode,
-                                        HttpServletResponse response)
+    public ResponseEntity<LoginResponseDTO> kakaoLogin(@RequestBody OAuthAccessTokenRequest code,
+                                                       HttpServletResponse response)
     {
         log.info("AuthController - /login/kakao  -  실행");
 
-        LoginResponseDTO user = authService.oAuthLoginWithKakao(accessCode, response);
+        LoginResponseDTO user = authService.oAuthLoginWithKakao(code, response);
 
         return ResponseEntity.ok(user);
     }
@@ -57,13 +54,12 @@ public class AuthController {
     })
     @GetMapping("/login/naver")
     public ResponseEntity<LoginResponseDTO> NaverLogin(
-            @RequestParam String code,
-            @RequestParam(value = "state", required = false) String state,
+            @RequestBody OAuthAccessTokenRequest code,
             HttpServletResponse response)
     {
         log.info("AuthController - /login/naver  -  실행");
 
-        LoginResponseDTO user = authService.oAuthLoginWithNaver(code, state, response);
+        LoginResponseDTO user = authService.oAuthLoginWithNaver(code, response);
 
         return ResponseEntity.ok(user);
     }
@@ -76,14 +72,13 @@ public class AuthController {
     })
     @GetMapping("login/github")
     public ResponseEntity<LoginResponseDTO> githubLogin(
-            @RequestParam("code") String accessCode,
-            @RequestParam(value = "state", required = false) String state,
+            @RequestBody OAuthAccessTokenRequest code,
             HttpServletResponse response
     )
     {
         log.info("AuthController - /login/github  -  실행");
 
-        LoginResponseDTO user = authService.oAuthLoginWithGithub(accessCode, state, response);
+        LoginResponseDTO user = authService.oAuthLoginWithGithub(code, response);
         return ResponseEntity.ok(user);
     }
 
@@ -95,25 +90,14 @@ public class AuthController {
     })
     @GetMapping("login/google")
     public ResponseEntity<LoginResponseDTO> googleLogin(
-            @RequestParam("code") String accessCode,
-            @RequestParam(value = "state", required = false) String state,
+            @RequestBody OAuthAccessTokenRequest code,
             HttpServletResponse response
     )
     {
         log.info("AuthController - /login/google  -  실행");
 
-        LoginResponseDTO user = authService.oAuthLoginWithGoogle(accessCode, state, response);
+        LoginResponseDTO user = authService.oAuthLoginWithGoogle(code, response);
         return ResponseEntity.ok(user);
-    }
-
-
-
-    public ResponseEntity<LoginResponseDTO> OAuthLogin(
-            @RequestBody OAuthLoginRequest dto,
-            HttpServletResponse response
-            )
-    {
-
     }
 
 
