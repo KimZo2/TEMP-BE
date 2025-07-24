@@ -13,7 +13,9 @@ public class SecurityConfig {
             "/",
             "/user/**",
             "/auth/**",
-            "/ws/**"
+            "/ws/**",
+            "/swagger-ui/**","/api-docs", "/swagger-ui-custom.html",
+            "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html"
     };
 
     @Bean

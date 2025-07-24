@@ -11,6 +11,9 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
+    // Swagger 인증 설정에 사용
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String TYPE = "JWT";
 
     // 암호화 키
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);

@@ -1,16 +1,15 @@
 package com.KimZo2.Back.service;
 
-import com.KimZo2.Back.dto.auth.AdditionalSignupRequest;
-import com.KimZo2.Back.dto.auth.KakaoDTO;
-import com.KimZo2.Back.dto.auth.NaverDTO;
+import com.KimZo2.Back.dto.auth.*;
+import com.KimZo2.Back.dto.member.LoginResponseDTO;
 import com.KimZo2.Back.entity.User;
 import com.KimZo2.Back.exception.AdditionalSignupRequiredException;
 import com.KimZo2.Back.repository.UserRepository;
-import com.KimZo2.Back.util.JwtUtil;
-import com.KimZo2.Back.util.KakaoUtil;
-import com.KimZo2.Back.util.NaverUtil;
+import com.KimZo2.Back.util.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +18,19 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final KakaoUtil kakaoUtil;
     private final NaverUtil naverUtil;
+    private final UserService userService;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final GitHubUtil gitHubUtil;
+    private final GoogleUtil googleUtil;
 
-
-    public User oAuthLoginWithKakao(String accessCode, HttpServletResponse response) {
+    public LoginResponseDTO oAuthLoginWithKakao(String accessCode, HttpServletResponse response) {
+        log.info("AuthService - 카카오 인증 실행");
 
         // access_token 요청
         KakaoDTO.OAuthToken oAuthToken = kakaoUtil.requestToken(accessCode);
@@ -39,22 +42,11 @@ public class AuthService {
         String providerId = String.valueOf(kakaoProfile.getId());
         String name = kakaoProfile.getKakao_account().getProfile().getNickname();
 
-        // 이미 가입된 유저인지 확인
-        Optional<User> optionalUser = userRepository.findByProviderAndProviderId(provider, providerId);
-
-        if (optionalUser.isPresent()) {
-            // 이미 가입된 사용자면 JWT 발급
-            User user = optionalUser.get();
-            String token = jwtUtil.generateToken(user.getNickname());
-            response.setHeader("Authorization", token);
-            return user;
-        } else {
-            // 회원가입이 아직 안 된 사용자
-            throw new AdditionalSignupRequiredException(provider, providerId, name);
-        }
+        return handleSocialLogin(provider, providerId, name, response);
     }
 
-    public User oAuthLoginWithNaver(String code, String state, HttpServletResponse response) {
+    public LoginResponseDTO oAuthLoginWithNaver(String code, String state, HttpServletResponse response) {
+        log.info("AuthService - 네이버 인증 실행");
 
         // access_token 요청
         String accessToken = naverUtil.requestToken(code, state);
@@ -66,34 +58,80 @@ public class AuthService {
         String providerId = String.valueOf(naverUser.getId());
         String name = naverUser.getName();
 
-        // 사용자 찾기 or 생성
+        return handleSocialLogin(provider, providerId, name, response);
+    }
+
+    public LoginResponseDTO oAuthLoginWithGithub(String code, String state, HttpServletResponse response) {
+        log.info("AuthService - 깃허브 인증 실행");
+
+        // access_token 요청
+        String accessToken = gitHubUtil.requestToken(code);
+
+        // 사용자 정보 요청
+        GitHubDTO.GithubUser githubUser = gitHubUtil.requestProfile(accessToken);
+
+        String provider = "github";
+        String providerId = String.valueOf(githubUser.getId());
+        String name = githubUser.getName();
+        if (name == null || name.isBlank()) {
+            name = githubUser.getLogin();
+        }
+
+        return handleSocialLogin(provider, providerId, name, response);
+    }
+
+    public LoginResponseDTO oAuthLoginWithGoogle(String code, String state, HttpServletResponse response) {
+        log.info("AuthService - 구글 인증 실행");
+
+        // access_token 요청
+        String accessToken = googleUtil.requestToken(code);
+
+        // 사용자 정보 요청
+        GoogleDTO.GoogleUser googleUser = googleUtil.requestProfile(accessToken);
+
+        String provider = "google";
+        String providerId = String.valueOf(googleUser.getId());
+        String name = googleUser.getName();
+
+        return handleSocialLogin(provider, providerId, name, response);
+    }
+
+    public LoginResponseDTO handleSocialLogin(String provider, String providerId, String name, HttpServletResponse response) {
         Optional<User> optionalUser = userRepository.findByProviderAndProviderId(provider, providerId);
 
         if (optionalUser.isPresent()) {
-            // 이미 가입된 사용자면 JWT 발급
             User user = optionalUser.get();
-            String token = jwtUtil.generateToken(user.getNickname());
+            String token = jwtUtil.generateToken(user.getNickname()); // 또는 user.getId()
             response.setHeader("Authorization", token);
-            return user;
+            return new LoginResponseDTO(token, user.getNickname());
         } else {
-            // 회원가입이 아직 안 된 사용자
             throw new AdditionalSignupRequiredException(provider, providerId, name);
         }
     }
 
-    public User oAuthcreateNewUser(AdditionalSignupRequest dto, HttpServletResponse response) {
+    public void oAuthcreateNewUser(AdditionalSignupRequest dto, HttpServletResponse response) {
+        log.info("AuthService - 회원가입 실행");
+
+        String provider = dto.getProvider();
+        String providerId = dto.getProviderId();
+        String name = dto.getName();
+        String nickName = dto.getNickname();
+        String birthday = dto.getBirthday();
+
+
         // 회원가입 사용자 user로 build
         User newUser = User.builder()
-                .provider(dto.getProvider())
-                .providerId(dto.getProviderId())
-                .name(dto.getName())
-                .nickname(dto.getNickname())
+                .provider(provider)
+                .providerId(providerId)
+                .name(name)
+                .nickname(nickName)
+                .birthday(birthday)
                 .build();
 
+        // 닉네임 중복 검사
+        userService.validateDuplicateNickName(newUser);
+
         // user 저장
-        User user = userRepository.save(newUser);
-        String token = jwtUtil.generateToken(user.getNickname());
-        response.setHeader("Authorization", token);
-        return user;
+        userRepository.save(newUser);
     }
 }

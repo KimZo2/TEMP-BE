@@ -1,16 +1,14 @@
 package com.KimZo2.Back.repository;
 
 import com.KimZo2.Back.entity.User;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface UserRepository {
+public interface UserRepository extends MongoRepository<User, String> {
 
-    User save(User user);
-
-    boolean existByUserId(String userId);
-
-    Optional<User> findByUserId(String userId);
+    boolean existsByNickname(String nickname);
 
     Optional<User> findByProviderAndProviderId(String provider, String providerId);
+
 }
