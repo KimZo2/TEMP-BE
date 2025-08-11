@@ -14,11 +14,43 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 public class GitHubUtil {
 
-    @Value("${github.auth.profile-uri}")
+    @Value("${spring.security.oauth2.client.registration.github.client-id}")
+    private String clientId;
+
+    @Value("${spring.security.oauth2.client.registration.github.client-secret}")
+    private String clientSecret;
+
+    @Value("${spring.security.oauth2.client.registration.github.redirect-uri}")
+    private String redirectUri;
+
+    @Value("${spring.security.oauth2.client.provider.github.token-uri}")
+    private String tokenUri;
+
+    @Value("${spring.security.oauth2.client.registration.github.profile-uri}")
     private String profileUri;
 
     private final WebClient.Builder webClientBuilder;
 
+    // 액세스 토큰 요청
+    public String requestToken(String accessCode) {
+        WebClient webClient = webClientBuilder.build();
+
+        return webClient.post()
+                .uri(tokenUri)
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .bodyValue(
+                        new GitHubDTO.GithubTokenRequest(
+                                clientId,
+                                clientSecret,
+                                accessCode,
+                                redirectUri
+                        )
+                )
+                .retrieve()
+                .bodyToMono(JsonNode.class)
+                .map(tokenResponse -> tokenResponse.get("access_token").asText())
+                .block();
+    }
     // 사용자 정보 요청
     public GitHubDTO.GithubUser requestProfile(String accessToken) {
         WebClient webClient = webClientBuilder.build();
