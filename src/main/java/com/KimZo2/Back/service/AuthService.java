@@ -29,11 +29,14 @@ public class AuthService {
     private final GitHubUtil gitHubUtil;
     private final GoogleUtil googleUtil;
 
-    public LoginResponseDTO oAuthLoginWithKakao(OAuthAccessTokenRequest code, HttpServletResponse response) {
+    public LoginResponseDTO oAuthLoginWithKakao(String accessCode, HttpServletResponse response) {
         log.info("AuthService - 카카오 인증 실행");
 
+        // access_token 요청
+        KakaoDTO.OAuthToken oAuthToken = kakaoUtil.requestToken(accessCode);
+
         // 사용자 정보 요청
-        KakaoDTO.KakaoProfile kakaoProfile = kakaoUtil.requestProfile(code.getAccessToken());
+        KakaoDTO.KakaoProfile kakaoProfile = kakaoUtil.requestProfile(oAuthToken);
 
         // provider && providerId
         String provider = "kakao";
@@ -42,11 +45,14 @@ public class AuthService {
         return handleSocialLogin(provider, providerId, response);
     }
 
-    public LoginResponseDTO oAuthLoginWithNaver(OAuthAccessTokenRequest code, HttpServletResponse response) {
+    public LoginResponseDTO oAuthLoginWithNaver(String accessCode,String state, HttpServletResponse response) {
         log.info("AuthService - 네이버 인증 실행");
 
+        // access_token 요청
+        String accessToken = naverUtil.requestToken(accessCode, state);
+
         // 사용자 정보 요청
-        NaverDTO.NaverUser naverUser = naverUtil.requestProfile(code.getAccessToken());
+        NaverDTO.NaverUser naverUser = naverUtil.requestProfile(accessToken);
 
         // provider && providerId
         String provider = "naver";
@@ -55,11 +61,14 @@ public class AuthService {
         return handleSocialLogin(provider, providerId, response);
     }
 
-    public LoginResponseDTO oAuthLoginWithGithub(OAuthAccessTokenRequest code, HttpServletResponse response) {
+    public LoginResponseDTO oAuthLoginWithGithub(String accessCode,String state, HttpServletResponse response) {
         log.info("AuthService - 깃허브 인증 실행");
 
+        // access_token 요청
+        String accessToken = gitHubUtil.requestToken(accessCode);
+
         // 사용자 정보 요청
-        GitHubDTO.GithubUser githubUser = gitHubUtil.requestProfile(code.getAccessToken());
+        GitHubDTO.GithubUser githubUser = gitHubUtil.requestProfile(accessToken);
 
         // provider && providerId
         String provider = "github";
@@ -68,11 +77,14 @@ public class AuthService {
         return handleSocialLogin(provider, providerId, response);
     }
 
-    public LoginResponseDTO oAuthLoginWithGoogle(OAuthAccessTokenRequest code, HttpServletResponse response) {
+    public LoginResponseDTO oAuthLoginWithGoogle(String accessCode,String state, HttpServletResponse response) {
         log.info("AuthService - 구글 인증 실행");
 
+        // access_token 요청
+        String accessToken = googleUtil.requestToken(accessCode);
+
         // 사용자 정보 요청
-        GoogleDTO.GoogleUser googleUser = googleUtil.requestProfile(code.getAccessToken());
+        GoogleDTO.GoogleUser googleUser = googleUtil.requestProfile(accessToken);
 
         // provider && providerId
         String provider = "google";
