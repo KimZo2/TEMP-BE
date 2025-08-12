@@ -53,8 +53,8 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "인증 실패")
     })
     @GetMapping("/login/naver")
-    public ResponseEntity<LoginResponseDTO> NaverLogin(
-            @RequestParam String accessCode,
+    public ResponseEntity<LoginResponseDTO> naverLogin(
+            @RequestParam("code") String accessCode,
             @RequestParam(value = "state", required = false) String state,
             HttpServletResponse response)
     {
@@ -71,7 +71,7 @@ public class AuthController {
             @ApiResponse(responseCode = "428", description = "회원정보 없음, 추가 정보 필요"),
             @ApiResponse(responseCode = "401", description = "인증 실패")
     })
-    @GetMapping("login/github")
+    @GetMapping("/login/github")
     public ResponseEntity<LoginResponseDTO> githubLogin(
             @RequestParam("code") String accessCode,
             @RequestParam(value = "state", required = false) String state,
@@ -90,7 +90,7 @@ public class AuthController {
             @ApiResponse(responseCode = "428", description = "회원정보 없음, 추가 정보 필요"),
             @ApiResponse(responseCode = "401", description = "인증 실패")
     })
-    @GetMapping("login/google")
+    @GetMapping("/login/google")
     public ResponseEntity<LoginResponseDTO> googleLogin(
             @RequestParam("code") String accessCode,
             @RequestParam(value = "state", required = false) String state,
