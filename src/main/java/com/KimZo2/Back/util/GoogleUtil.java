@@ -26,7 +26,7 @@ public class GoogleUtil {
     @Value("${spring.security.oauth2.client.provider.google.token-uri}")
     private String tokenUri;
 
-    @Value("${spring.security.oauth2.client.registration.google.profile-uri}")
+    @Value("${spring.security.oauth2.client.provider.google.user-info-uri}")
     private String profileUri;
 
     @Value("${spring.security.oauth2.client.registration.google.authorization-grant-type}")

@@ -4,13 +4,13 @@ import com.KimZo2.Back.dto.auth.KakaoDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.http.HttpStatusCode;
 import reactor.core.publisher.Mono;
 
 
@@ -30,7 +30,7 @@ public class KakaoUtil {
     @Value("${spring.security.oauth2.client.provider.kakao.token-uri}")
     private String tokenUri;
 
-    @Value("${spring.security.oauth2.client.provider.kakao.profile-uri}")
+    @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
     private String profileUri;
 
 
@@ -46,20 +46,26 @@ public class KakaoUtil {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .build();
 
+
         KakaoDTO.OAuthToken oAuthToken = webClient.post()
-                .uri("/oauth/token")
+                .uri("")
                 .body(BodyInserters.fromFormData(body))
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, res ->
+                        res.bodyToMono(String.class).doOnNext(errorBody ->
+                                log.error("카카오 토큰 요청 실패: {}", errorBody)
+                        ).then(Mono.error(new RuntimeException("토큰 요청 실패")))
+                )
                 .bodyToMono(KakaoDTO.OAuthToken.class)
                 .block();
 
-        if (oAuthToken == null || oAuthToken.getAccess_token() == null) {
-            throw new RuntimeException("카카오 Access Token 발급 실패");
-        }
-
+//            if (oAuthToken == null || oAuthToken.getAccess_token() == null) {
+//                throw new RuntimeException("카카오 Access Token 발급 실패");
+//            }
         log.info("Access Token: {}", oAuthToken.getAccess_token());
 
         return oAuthToken;
+
     }
 
 
@@ -82,6 +88,5 @@ public class KakaoUtil {
 
         return kakaoProfile;
     }
-
 }
 

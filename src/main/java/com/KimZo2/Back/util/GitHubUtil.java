@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class GitHubUtil {
     @Value("${spring.security.oauth2.client.provider.github.token-uri}")
     private String tokenUri;
 
-    @Value("${spring.security.oauth2.client.registration.github.profile-uri}")
+    @Value("${spring.security.oauth2.client.provider.github.user-info-uri}")
     private String profileUri;
 
     private final WebClient.Builder webClientBuilder;
@@ -47,6 +49,11 @@ public class GitHubUtil {
                         )
                 )
                 .retrieve()
+                .onStatus(HttpStatusCode::isError, res ->
+                        res.bodyToMono(String.class).doOnNext(errorBody ->
+                                log.error("깃허브 토큰 요청 실패: {}", errorBody)
+                        ).then(Mono.error(new RuntimeException("토큰 요청 실패")))
+                )
                 .bodyToMono(JsonNode.class)
                 .map(tokenResponse -> tokenResponse.get("access_token").asText())
                 .block();

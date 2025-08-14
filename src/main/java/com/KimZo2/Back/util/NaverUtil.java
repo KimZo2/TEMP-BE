@@ -14,7 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 public class NaverUtil {
 
-    @Value("${spring.security.oauth2.client.registration.naver.profile-uri}")
+    @Value("${spring.security.oauth2.client.provider.naver.user-info-uri}")
     private String profileUri;
 
     @Value("${spring.security.oauth2.client.registration.naver.client-id}")
