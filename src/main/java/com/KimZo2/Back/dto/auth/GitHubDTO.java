@@ -7,6 +7,21 @@ import lombok.*;
 public class GitHubDTO {
 
     @Getter
+    @AllArgsConstructor
+    public static class GithubTokenRequest {
+        @JsonProperty("client_id")
+        private String clientId;
+
+        @JsonProperty("client_secret")
+        private String clientSecret;
+
+        private String code;
+
+        @JsonProperty("redirect_uri")
+        private String redirectUri;
+    }
+
+    @Getter
     @Setter
     public static class GithubUser {
         private Long id;              // providerId로 사용

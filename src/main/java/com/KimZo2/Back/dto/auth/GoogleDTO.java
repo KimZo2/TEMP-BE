@@ -9,8 +9,5 @@ public class GoogleDTO {
     @Setter
     public static class GoogleUser {
         private String id;
-        private String email;
-        private String name;
-        private String picture;
     }
 }
