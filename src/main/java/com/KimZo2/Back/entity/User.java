@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 
     @Id
-    private Long id;
+    private String id;
 
     private String provider; // kakao or naver or google or github
 
@@ -26,4 +26,6 @@ public class User {
     private String nickname; // 필수 항목 이걸로 사용자 구분
 
     private String birthday;
+
+    private boolean agreement;
 }

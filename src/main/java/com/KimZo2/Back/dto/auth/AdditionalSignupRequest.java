@@ -10,4 +10,5 @@ public class AdditionalSignupRequest {
     private String name;
     private String nickname;
     private String birthday;
+    private boolean agreement;
 }
