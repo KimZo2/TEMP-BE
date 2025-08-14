@@ -19,7 +19,17 @@ public class Room {
 
     private String name;
 
-    private String creator;
+    private String creatorNickname;
 
-    private LocalDateTime createAt;
+    private long maxParticipants;
+
+    private boolean isPrivate;
+
+    private String password;
+
+    private String roomTime;
+
+    private long currentParticipants;
+
+    private long roomType;
 }

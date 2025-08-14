@@ -14,6 +14,7 @@ public class SecurityConfig {
             "/user/**",
             "/auth/**",
             "/ws/**",
+            "/auth/signup",
             "/swagger-ui/**","/api-docs", "/swagger-ui-custom.html",
             "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html"
     };
@@ -26,9 +27,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .securityMatcher("/**")
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(allowUrls).permitAll()
+                .authorizeHttpRequests(auth ->
+                                auth.requestMatchers(allowUrls).permitAll()
 //                        .requestMatchers("/auth/login/kakao/**").permitAll()
                         .anyRequest().authenticated()
 
