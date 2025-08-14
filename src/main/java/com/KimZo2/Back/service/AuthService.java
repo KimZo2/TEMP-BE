@@ -114,6 +114,7 @@ public class AuthService {
         String name = dto.getName();
         String nickName = dto.getNickname();
         String birthday = dto.getBirthday();
+        boolean agreement = dto.isAgreement();
 
 
         // 회원가입 사용자 user로 build
@@ -123,6 +124,7 @@ public class AuthService {
                 .name(name)
                 .nickname(nickName)
                 .birthday(birthday)
+                .agreement(agreement)
                 .build();
 
         // 닉네임 중복 검사
