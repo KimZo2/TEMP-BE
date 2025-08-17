@@ -1,35 +1,70 @@
 package com.KimZo2.Back.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Entity
-@Getter @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Table(name = "rooms")
 public class Room {
     @Id
     @GeneratedValue
-    private String id;
+    private UUID id;
 
+    @Column(nullable = false)
     private String name;
 
-    private String creatorNickname;
+    @Column(nullable = false)
+    private int maxParticipants;
 
-    private long maxParticipants;
-
+    @Column(nullable = false)
     private boolean isPrivate;
 
+    @Column(name = "password_hash", length = 80)
     private String password;
 
-    private String roomTime;
+    @Column(nullable = false)
+    private int roomTime;
 
-    private long currentParticipants;
+    private int currentParticipants;
 
+    @Column(nullable = false)
     private long roomType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
+    private User creator;
+
+    @Column(nullable = false)
+    private boolean status = true;
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    private OffsetDateTime createdAt;
+
+    private OffsetDateTime expiresAt;
+
+    // 메서드
+    public void makePrivate(String encodedPassword) {
+        this.isPrivate = true;
+        this.password = encodedPassword;
+    }
+
+    // 연관 관계 메서드
+    public void setUser(User user) {
+        this.creator = user;
+        if(!creator.getRooms().contains(this)){
+            creator.getRooms().add(this);
+        }
+    }
 }
