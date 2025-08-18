@@ -51,7 +51,7 @@ Icon?
 node_modules/
 
 # application 설정 파일 무시
-*.yml
+application.yml
 *.properties
 
 .vercel
