@@ -10,6 +10,9 @@ public interface RoomRepository {
     // 방 조회
     Room findByIsPrivate();
 
+    // 방 이름 조회
+    Room findByName();
+
     // 방 제거
 
 }
